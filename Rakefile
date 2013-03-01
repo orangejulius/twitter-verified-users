@@ -18,6 +18,7 @@ task :create_db do |t|
 	end
 end
 
+desc "add new ids from the list of verified users"
 task :get_friend_ids do |t|
 	puts "getting friend ids"
 	begin
@@ -31,19 +32,20 @@ task :get_friend_ids do |t|
 			end
 		end while next_cursor = cursor.next
 	rescue Twitter::Error::TooManyRequests => error
-		puts "sleeping for "+error.rate_limit.reset_in.to_s
+		puts "#{Time.now}: sleeping until #{error.rate_limit.reset_at} (#{error.rate_limit.reset_in} seconds)"
 		sleep error.rate_limit.reset_in
 		retry
 	end
 end
 
+desc "find user ids in db and get information for them (if it isn't already there)"
 task :get_user_info do |t|
 	results = DB[:twitter_verified_users].where(data: nil)
 	results.each do |result|
 		begin
 			user = Twitter.user(result[:twitter_id])
 		rescue Twitter::Error::TooManyRequests => error
-			puts "sleeping for "+error.rate_limit.reset_in.to_s
+			puts "#{Time.now}: sleeping until #{error.rate_limit.reset_at} (#{error.rate_limit.reset_in} seconds)"
 			sleep error.rate_limit.reset_in
 			retry
 		end
@@ -52,6 +54,7 @@ task :get_user_info do |t|
 	end
 end
 
+desc "show how many rows, and rows with full user data, are in the DB"
 task :show_status do |t|
 	total_rows = DB[:twitter_verified_users].count
 	partial_rows = DB[:twitter_verified_users].where(data: nil).count

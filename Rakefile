@@ -19,7 +19,7 @@ task :create_db do |t|
 end
 
 desc "add new ids from the list of verified users"
-task :get_friend_ids do |t|
+task :get_verified_users do |t|
 	puts "getting friend ids"
 	begin
 		next_cursor = nil

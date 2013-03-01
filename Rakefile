@@ -11,7 +11,9 @@ end
 
 if `hostname` != 'pacific'
 	DB = Sequel.connect('sqlite://twitter.db')
+	request_size = 10
 else
+	request_size = 5000
 	DB = Sequel.connect('postgres://uuwvvjncongytz:pDsdo-AOoNpzr2Uel9lokZSHL1@ec2-54-243-228-241.compute-1.amazonaws.com:5432/dajg4s9su7v5g')
 end
 
@@ -28,7 +30,8 @@ task :get_verified_users do |t|
 	begin
 		next_cursor = nil
 		begin
-			cursor = Twitter.friend_ids('verified', cursor: next_cursor)
+			puts "on cursor: #{next_cursor}"
+			cursor = Twitter.friend_ids('verified', cursor: next_cursor, count: request_size)
 			cursor.collection.each do |id|
 				if DB[:twitter_verified_users].where(twitter_id: id).count == 0
 					DB[:twitter_verified_users].insert(twitter_id: id)

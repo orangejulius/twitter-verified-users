@@ -22,12 +22,11 @@ task :get_friend_ids do |t|
 	puts "getting friend ids"
 	begin
 		next_cursor = nil
-		cursor = Twitter.friend_ids('verified', cursor: next_cursor)
 		begin
+			cursor = Twitter.friend_ids('verified', cursor: next_cursor)
 			cursor.collection.each do |id|
-				begin
+				if DB[:twitter_verified_users].where(twitter_id: id).count == 0
 					DB[:twitter_verified_users].insert(twitter_id: id)
-				rescue Exception => e
 				end
 			end
 		end while next_cursor = cursor.next

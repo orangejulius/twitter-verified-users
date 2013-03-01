@@ -62,7 +62,7 @@ task :get_user_info do |t|
 end
 
 desc "show how many rows, and rows with full user data, are in the DB"
-task :show_status do |t|
+task :status do |t|
 	total_rows = DB[:twitter_verified_users].count
 	partial_rows = DB[:twitter_verified_users].where(data: nil).count
 	puts "total rows:\t#{total_rows}"

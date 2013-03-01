@@ -9,7 +9,11 @@ Twitter.configure do |config|
 	config.oauth_token_secret = 'l782bFMpEj1P9uQmw9FemTAYLM3UGMOmIiTjPxfgnA'
 end
 
-DB =Sequel.connect('postgres://uuwvvjncongytz:pDsdo-AOoNpzr2Uel9lokZSHL1@ec2-54-243-228-241.compute-1.amazonaws.com:5432/dajg4s9su7v5g')
+if `hostname` != 'pacific'
+	DB = Sequel.connect('sqlite://twitter.db')
+else
+	DB = Sequel.connect('postgres://uuwvvjncongytz:pDsdo-AOoNpzr2Uel9lokZSHL1@ec2-54-243-228-241.compute-1.amazonaws.com:5432/dajg4s9su7v5g')
+end
 
 task :create_db do |t|
 	DB.create_table :twitter_verified_users do

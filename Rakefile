@@ -1,3 +1,4 @@
+require 'json'
 require 'twitter'
 require 'sequel'
 
@@ -8,14 +9,12 @@ Twitter.configure do |config|
 	config.oauth_token_secret = 'l782bFMpEj1P9uQmw9FemTAYLM3UGMOmIiTjPxfgnA'
 end
 
-DB = Sequel.connect('sqlite://twitter.db')
+DB =Sequel.connect('postgres://uuwvvjncongytz:pDsdo-AOoNpzr2Uel9lokZSHL1@ec2-54-243-228-241.compute-1.amazonaws.com:5432/dajg4s9su7v5g')
 
 task :create_db do |t|
 	DB.create_table :twitter_verified_users do
 		primary_key :twitter_id
-		String :screen_name
-		String :real_name
-		String :photo_url
+		String :data
 	end
 end
 
@@ -39,7 +38,17 @@ task :get_friend_ids do |t|
 	end
 end
 
-task :check_rate_limit do |t|
-	rl = Twitter::RateLimit
-	puts rl.limit#, rl.remaining, rl.reset_at
+task :get_user_info do |t|
+	results = DB[:twitter_verified_users].where(data: nil)
+	results.each do |result|
+		begin
+			user = Twitter.user(result[:twitter_id])
+		rescue Twitter::Error::TooManyRequests => error
+			puts "sleeping for "+error.rate_limit.reset_in.to_s
+			sleep error.rate_limit.reset_in
+			retry
+		end
+		data = user.to_hash.to_json
+		DB[:twitter_verified_users].where(twitter_id: result[:twitter_id]).update(data: data)
+	end
 end

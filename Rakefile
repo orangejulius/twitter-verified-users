@@ -52,3 +52,11 @@ task :get_user_info do |t|
 		DB[:twitter_verified_users].where(twitter_id: result[:twitter_id]).update(data: data)
 	end
 end
+
+task :show_status do |t|
+	total_rows = DB[:twitter_verified_users].count
+	partial_rows = DB[:twitter_verified_users].where(data: nil).count
+	puts "total rows:\t#{total_rows}"
+	puts "partial rows:\t#{partial_rows}"
+	puts "full rows:\t#{total_rows - partial_rows}"
+end

@@ -3,10 +3,10 @@ require 'twitter'
 require 'sequel'
 
 Twitter.configure do |config|
-	config.consumer_key = 'IrA112tGcxGtY1GBWfw1Aw'
-	config.consumer_secret = 'XYn5gSfg3vwMfcN2qvTnEoJWVVHuobhwzNpovws2cU'
-	config.oauth_token = '15061294-M5iJIHRgpbbxyaqe1om7IDWY8G2oREwIxdkVtHpf7'
-	config.oauth_token_secret = 'l782bFMpEj1P9uQmw9FemTAYLM3UGMOmIiTjPxfgnA'
+	config.consumer_key = 'BoRSYcvj7zDLReWs6tnc8A'
+	config.consumer_secret = '41pq5QxrdBe16KL0ajQXhHHRjKI6s2p1tJGFbqJCO0'
+	config.oauth_token = '62420328-xbHqLUUe0zApJ36EFhfJ8g2bWLRsyqPGJK0awEwk'
+	config.oauth_token_secret = 'iHoDg7U2ATLyUxMvaZYBKEm56KSIdbip02znquwGg'
 end
 
 if `hostname` =~ /pacific/

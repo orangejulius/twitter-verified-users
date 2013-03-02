@@ -9,12 +9,12 @@ Twitter.configure do |config|
 	config.oauth_token_secret = 'l782bFMpEj1P9uQmw9FemTAYLM3UGMOmIiTjPxfgnA'
 end
 
-if `hostname` != 'pacific'
-	DB = Sequel.connect('sqlite://twitter.db')
-	request_size = 10
-else
+if `hostname` =~ /pacific/
 	request_size = 5000
 	DB = Sequel.connect('postgres://uuwvvjncongytz:pDsdo-AOoNpzr2Uel9lokZSHL1@ec2-54-243-228-241.compute-1.amazonaws.com:5432/dajg4s9su7v5g')
+else
+	request_size = 10
+	DB = Sequel.connect('sqlite://twitter.db')
 end
 
 task :create_db do |t|

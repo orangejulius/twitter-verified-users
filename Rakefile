@@ -27,8 +27,8 @@ end
 desc "add new ids from the list of verified users"
 task :get_verified_users do |t|
 	puts "getting friend ids"
+	next_cursor = nil
 	begin
-		next_cursor = nil
 		begin
 			puts "on cursor: #{next_cursor}"
 			cursor = Twitter.friend_ids('verified', cursor: next_cursor, count: request_size)

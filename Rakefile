@@ -47,18 +47,22 @@ end
 
 desc "find user ids in db and get information for them (if it isn't already there)"
 task :get_user_info do |t|
-	results = DB[:twitter_verified_users].where(data: nil)
-	results.each do |result|
+	begin
+		results = DB[:twitter_verified_users].where(data: nil).limit(100)
+		user_ids = results.map  { |result | result[:twitter_id] }
 		begin
-			user = Twitter.user(result[:twitter_id])
+			users = Twitter.users(user_ids)
 		rescue Twitter::Error::TooManyRequests => error
 			puts "#{Time.now}: sleeping until #{error.rate_limit.reset_at} (#{error.rate_limit.reset_in} seconds)"
 			sleep error.rate_limit.reset_in
 			retry
 		end
-		data = user.to_hash.to_json
-		DB[:twitter_verified_users].where(twitter_id: result[:twitter_id]).update(data: data)
-	end
+		users.each do |user|
+			puts user.name
+			data = user.to_hash.to_json
+			DB[:twitter_verified_users].where(twitter_id: user.id).update(data: data)
+		end
+	end while results.count > 0
 end
 
 desc "show how many rows, and rows with full user data, are in the DB"
